@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de evaluación y tratamiento de heridas asistido por IA">
+    <meta name="theme-color" content="#1e3a8a">
+    <title>WoundCare AI - Demo Final</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/app.css">
+    <script>
+        // Configuración de Tailwind
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+        <script type="module" src="/js/theme.js"></script>
+</head>
+<body class="min-h-screen transition-colors duration-200">
+    <!-- Auto reload (polls __reload__.txt; disable with ?noreload) -->
+    <script type="module" src="/assets/js/reload.js"></script>
+    <!-- Contenedor principal de la aplicación -->
+    <div class="min-h-screen flex flex-col">
+                <!-- Header con navegación -->
+                <header id="nav" class="relative">
+                    <button id="theme-toggle" class="btn btn-secondary" style="position:absolute;top:4px;right:8px;"></button>
+                    <!-- Beacon status lite -->
+                    <div id="probe-beacon" class="absolute left-2 top-2 w-3 h-3 rounded-full bg-gray-400" title="status-lite"></div>
+                </header>
+
+        <!-- Información del paciente -->
+        <div id="patient-header" class="container mx-auto px-4 mt-4"></div>
+
+        <!-- Contenido principal -->
+        <main class="container mx-auto px-4 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Panel izquierdo: Parámetros TIMERSOP -->
+                <div id="timersop" class="flex-1"></div>
+
+                <!-- Panel derecho: Detalles de la herida -->
+                <div id="wound-thumb" class="w-full lg:w-96"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Recomendación -->
+    <div id="modal-root"></div>
+
+        <!-- Fixed Self-check status (live mirror) -->
+        <div id="selfcheck-fixed" class="hidden">
+            <div id="sc-status" class="font-semibold mb-1">Self-check</div>
+            <div id="sc-metrics" class="text-[11px] leading-snug"></div>
+        </div>
+
+    <!-- Mensajes de error -->
+    <div id="form-errors" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full hidden">
+        <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg shadow-lg" role="alert">
+            <span class="block sm:inline" id="form-errors-msg"></span>
+        </div>
+    </div>
+
+    <!-- Runtime config (must come before module scripts) -->
+    <script src="/config.js"></script>
+
+    <!-- Scripts -->
+    <script type="module" src="/assets/js/main.js"></script>
+    <script type="module">
+        import { registerBuiltins } from '/js/modsys/builtin.js';
+        registerBuiltins();
+        // Expose a tiny inspector for debugging
+        import * as reg from '/js/modsys/registry.js';
+        window.WCA_MODS = { list: reg.list };
+    </script>
+    <script type="module" src="/js/wca-lite.js"></script>
+
+        <!-- Self-check Panel (lightweight, no build) -->
+        <section class="my-6 container mx-auto px-4">
+            <div class="flex items-center gap-2 mb-2">
+                <button id="btn-selfcheck" class="px-3 py-2 bg-gray-800 text-white rounded">Run Self-check</button>
+                <span id="selfcheck-summary" class="text-sm text-gray-600"></span>
+            </div>
+            <div id="selfcheck-panel" class="border border-gray-200 rounded p-3 bg-white dark:bg-gray-800"></div>
+        </section>
+        <!-- Probes & Monitor (lite) Panel -->
+        <section class="my-6 container mx-auto px-4" id="probe-panel">
+            <h2 class="text-lg font-semibold mb-2">Probes & Monitor (lite)</h2>
+            <div class="text-sm text-gray-600 mb-2">Auto-refresh cada 2s</div>
+            <div id="probe-stats" class="text-xs font-mono bg-gray-50 dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-700 whitespace-pre"></div>
+        </section>
+    <script type="module" src="/js/selfcheck.js"></script>
+    <script type="module" src="/js/probes-lite.js"></script>
+    <script type="module">// mirror selfcheck summary into fixed panel
+    const fx = document.getElementById('selfcheck-fixed');
+    const summary = document.getElementById('selfcheck-summary');
+    const met = document.getElementById('sc-metrics');
+    function sync(){ if(!summary||!met||!fx) return; const txt=summary.textContent||''; if(!txt.trim()) return; fx.classList.remove('hidden'); met.textContent = txt; }
+    const obs = new MutationObserver(sync); if(summary) obs.observe(summary,{childList:true,characterData:true,subtree:true});
+    window.addEventListener('load', sync);
+    </script>
+
+        <!-- Optional alias IDs to satisfy demo selectors (non-invasive) -->
+        <input type="hidden" id="timersop-moisture" value="" />
+        <input type="hidden" id="timersop-infection-yes" value="" />
+        <input type="hidden" id="timersop-infection-no" value="" />
+        <input type="hidden" id="timersop-pain" value="" />
+</body>
+</html>

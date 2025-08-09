@@ -1,0 +1,133 @@
+<div class="space-y-6">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Nueva Evaluación</h2>
+    <form id="wound-assessment-form" class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-inner space-y-6">
+        <input type="hidden" name="patientId" value="DEMO-001">
+        <input type="hidden" name="woundId" value="DEMO-W001">
+        <input type="hidden" name="assessmentDate" id="assessment-date-input">
+        
+    <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Parámetros T.I.M.E.R.S.O.P.</h3>
+
+        <!-- Tejido -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label for="tissue" class="block text-sm font-semibold text-gray-700">Tejido</label>
+            <select id="tissue" name="tissue" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                <option value="">Seleccione tipo de tejido</option>
+                <option value="Epitelial">Epitelial (Tejido sano)</option>
+                <option value="Granulacion">Granulación</option>
+                <option value="Esfacelo">Esfacelo (Tejido no viable)</option>
+                <option value="Necrosis">Necrosis (Tejido muerto)</option>
+            </select>
+        </div>
+
+        <!-- Infección -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label class="block text-sm font-semibold text-gray-700">Infección</label>
+            <div class="mt-2 flex space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="infection" value="Si" class="form-radio text-blue-600" required>
+                    <span class="ml-2 text-gray-600">Sí</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="infection" value="No" class="form-radio text-blue-600">
+                    <span class="ml-2 text-gray-600">No</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Humedad -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label for="moisture" class="block text-sm font-semibold text-gray-700">Humedad</label>
+            <select id="moisture" name="moisture" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                <option value="">Seleccione nivel de exudado</option>
+                <option value="Bajo">Bajo</option>
+                <option value="Moderado">Moderado</option>
+                <option value="Alto">Alto</option>
+            </select>
+        </div>
+
+        <!-- Borde -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label for="edge" class="block text-sm font-semibold text-gray-700">Borde</label>
+            <select id="edge" name="edge" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                <option value="">Seleccione estado del borde</option>
+                <option value="Integrados">Integrados (Normales)</option>
+                <option value="No-avanzado">No-avanzados</option>
+                <option value="Retractil">Retráctil</option>
+            </select>
+        </div>
+
+        <!-- Restos -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label class="block text-sm font-semibold text-gray-700">Restos</label>
+            <div class="mt-2 flex space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="remains" value="Si" class="form-radio text-blue-600" required>
+                    <span class="ml-2 text-gray-600">Sí</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="remains" value="No" class="form-radio text-blue-600">
+                    <span class="ml-2 text-gray-600">No</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Piel Circundante -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label for="surrounding" class="block text-sm font-semibold text-gray-700">Piel Circundante</label>
+            <select id="surrounding" name="surrounding" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                <option value="">Seleccione estado de la piel</option>
+                <option value="Intacta">Intacta</option>
+                <option value="Eritema">Eritema</option>
+                <option value="Macerada">Macerada</option>
+            </select>
+        </div>
+
+        <!-- Olor -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label for="odor" class="block text-sm font-semibold text-gray-700">Olor (0-5)</label>
+            <input type="range" id="odor" name="odor" min="0" max="5" value="0" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+            <span id="odor-value" class="block text-right text-xs text-gray-500">0</span>
+        </div>
+
+        <!-- Sangrado -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label for="bleeding" class="block text-sm font-semibold text-gray-700">Sangrado (0-5)</label>
+            <input type="range" id="bleeding" name="bleeding" min="0" max="5" value="0" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+            <span id="bleeding-value" class="block text-right text-xs text-gray-500">0</span>
+        </div>
+
+        <!-- Dolor -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <label for="pain" class="block text-sm font-semibold text-gray-700">Dolor (0-5)</label>
+            <input type="range" id="pain" name="pain" min="0" max="5" value="0" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+            <span id="pain-value" class="block text-right text-xs text-gray-500">0</span>
+        </div>
+
+            <!-- Acciones de demo -->
+            <div class="mt-6">
+                <button type="button" id="demo-fill-btn"
+                    class="w-full bg-gray-200 text-gray-900 dark:bg-gray-600 dark:text-white font-medium py-2.5 px-4 rounded-xl shadow hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:ring-offset-gray-800">
+                    Rellenar Demo (aleatorio)
+                </button>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-8 space-y-4">
+                <button type="button" id="recommendation-btn" 
+                    data-modal-trigger="recommendation-modal"
+                    class="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-xl shadow-lg 
+                        transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 
+                        focus:ring-blue-500 focus:ring-offset-2 dark:ring-offset-gray-800">
+                    Generar Recomendación
+                </button>
+                <button type="submit" 
+                    class="w-full bg-green-600 text-white font-medium py-3 px-4 rounded-xl shadow-lg 
+                        transition-all duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 
+                        focus:ring-green-500 focus:ring-offset-2 dark:ring-offset-gray-800">
+                    Guardar Evaluación
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,123 @@
+*** Report-Only Patch: M5-plus (DO NOT APPLY YET)
+*** Context
+Aditive improvements (a)-(f) prepared without modifying source in this session.
+Scope limited to backend/service.py, backend/engine.py, backend/plan.py, backend/schemas.py (only if needed for types of new additions) and possibly a new helper.
+
+*** Diff (proposed)
+# (a) Introduce helper _build_generic_plan and replace inline block in recommend (service.py)
+# (b) Enhance /status-lite
+# (c) Defensive compute_risk .get usage
+# (d) Deterministic ranking tie-break
+# (e) Brand sanitization logging + suppress BRAND_REMOVED in _localize_codes
+# (f) reasons_to_why filtered by REASON_TEXT (already implemented pattern but we ensure no empties)
+
+--- a/backend/service.py
++++ b/backend/service.py
+@@
+-from .engine import compute_risk, rank_dressings
++from .engine import compute_risk, rank_dressings
++from typing import List
+@@
+-    risk = engine_mod.compute_risk(payload.eval)
++    risk = engine_mod.compute_risk(payload.eval)
+@@
+-    plan_steps = []
+-    title = 'Plan de cuidado (genérico)'
+-    if allowed:
+-        if payload.eval.severity == 'high' or payload.eval.infection_signs:
+-            title = 'Plan prioritario (genérico)'
+-            plan_steps = [
+-                'Cobertura limpia inmediata no oclusiva',
+-                'Registro fotográfico inmediato',
+-                'Educación y signos de alarma',
+-                'Derivación prioritaria a evaluación clínica',
+-            ]
+-        else:
+-            plan_steps = [
+-                'Higiene y limpieza suave de la zona',
+-                'Registro fotográfico en cada control',
+-                'Educación al paciente/cuidador',
+-                'Control programado y reevaluación',
+-                'Derivar a evaluación clínica si empeora',
+-            ]
+-    else:
+-        plan_steps = ['Revisión manual requerida — demo estricta no muestra plan automático.']
++    # (a) Refactor: build plan steps via helper for clarity (same outcomes)
++    def _build_generic_plan(eval_obj, is_allowed: bool) -> (str, List[str]):
++        """Derive title and plan steps deterministically (no behavior change)."""
++        t = 'Plan de cuidado (genérico)'
++        steps: List[str] = []
++        if not is_allowed:
++            return t, ['Revisión manual requerida — demo estricta no muestra plan automático.']
++        high = eval_obj.severity == 'high'
++        if high or eval_obj.infection_signs:
++            t = 'Plan prioritario (genérico)'
++            steps = [
++                'Cobertura limpia inmediata no oclusiva',
++                'Registro fotográfico inmediato',
++                'Educación y signos de alarma',
++                'Derivación prioritaria a evaluación clínica',
++            ]
++        else:
++            steps = [
++                'Higiene y limpieza suave de la zona',
++                'Registro fotográfico en cada control',
++                'Educación al paciente/cuidador',
++                'Control programado y reevaluación',
++                'Derivar a evaluación clínica si empeora',
++            ]
++        return t, steps
++    title, plan_steps = _build_generic_plan(payload.eval, allowed)
+@@
+-    if FEATURE_IA_COLUMN:
++    if FEATURE_IA_COLUMN:
+@@
+-            col_out = run_column(payload.model_dump(), base_rec=recommendation.model_dump())
++            col_out = run_column(payload.dict(), base_rec=recommendation.dict())  # ensure compat when base fix applied
+@@
+-    req_dump = payload.model_dump()
++    req_dump = payload.dict()  # ensure compat when base fix applied
+@@
+-        'result': recommendation.model_dump(),
++        'result': recommendation.dict(),  # ensure compat when base fix applied
+
+--- a/backend/engine.py
++++ b/backend/engine.py
+@@
+-from typing import List, Dict, Sequence
++from typing import List, Dict, Sequence, Tuple
+@@
+-def reasons_to_why(codes: Sequence[str]) -> str:
+-    return ' · '.join(REASON_TEXT[c] for c in codes if c in REASON_TEXT)
++def reasons_to_why(codes: Sequence[str]) -> str:
++    # (f) Filter strictly by known codes; avoid empty segments
++    return ' · '.join(REASON_TEXT[c] for c in codes if c in REASON_TEXT)
+@@
+-def compute_risk(e: Eval) -> float:
+-    base = {'low': 0.2, 'moderate': 0.5, 'high': 0.8}[e.severity]
+-    exu = {'none': 0.0, 'low': 0.05, 'moderate': 0.1, 'high': 0.2}[e.exudate_level]
++def compute_risk(e: Eval) -> float:
++    # (c) Defensive: tolerate unexpected enum values with safe defaults
++    base = {'low': 0.2, 'moderate': 0.5, 'high': 0.8}.get(getattr(e, 'severity', ''), 0.5)
++    exu = {'none': 0.0, 'low': 0.05, 'moderate': 0.1, 'high': 0.2}.get(getattr(e, 'exudate_level', ''), 0.05)
+@@
+-def _localize_codes(codes: Sequence[str]) -> List[str]:
++def _localize_codes(codes: Sequence[str]) -> List[str]:
+@@
+-    ranked.sort(key=lambda x: x[0], reverse=True)
++    # (d) Deterministic stable sort: score desc then id asc
++    ranked.sort(key=lambda x: (-x[0], x[1].id))
+@@
+-        clean_name, brand_rc = _sanitize_name(d.name, d.category)
++        clean_name, brand_rc = _sanitize_name(d.name, d.category)
+@@
+-        combined_internal = sorted(set((brand_rc or []) + rc_all))
++        combined_internal = sorted(set((brand_rc or []) + rc_all))
+@@
+-        localized = _localize_codes(combined_internal) if combined_internal else None
++        localized = _localize_codes([c for c in combined_internal if c != 'BRAND_REMOVED']) if combined_internal else None  # (e) suppress technical tag
+@@
+-        why = reasons_to_why(combined_internal or []) if combined_internal else None
++        why = reasons_to_why([c for c in combined_internal if c != 'BRAND_REMOVED']) if combined_internal else None
+
+*** End Patch

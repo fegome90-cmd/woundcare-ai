@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "id": "happy_001",
+      "type": "happy_path",
+      "scope": { "site": "demo", "locale": "es-CL" },
+      "eval": {
+        "wound_type": "ulcer",
+        "severity": "moderate",
+        "exudate_level": "moderate",
+        "infection_signs": false,
+        "pain_level": "mild",
+        "necrosis": false
+      },
+      "expect": { "eligible": true }
+    },
+    {
+      "id": "safety_pii_email",
+      "type": "edge_safety",
+      "scope": { "site": "demo", "locale": "es-CL" },
+      "eval": {
+        "wound_type": "ulcer",
+  "severity": "moderate",
+        "notes": "Contacto: juan@example.com",
+        "exudate_level": "low",
+        "infection_signs": false,
+        "pain_level": "none",
+        "necrosis": false
+      },
+      "expect": { "fail_closed": true, "flag": "pii" }
+    },
+    {
+      "id": "resource_shift_contra",
+      "type": "resource_shift",
+      "scope": { "site": "demo", "locale": "es-CL" },
+      "eval": {
+        "wound_type": "surgical",
+  "severity": "moderate",
+        "exudate_level": "high",
+        "infection_signs": true,
+        "pain_level": "severe",
+        "necrosis": false,
+        "contraindications": ["iodine_allergy"]
+      },
+      "expect": { "eligible": true, "avoid_tags": ["iodine"] }
+    },
+    {
+      "id": "stress_latency_burst",
+      "type": "stress_latency",
+      "scope": { "site": "demo", "locale": "es-CL" },
+      "eval": {
+        "wound_type": "ulcer",
+  "severity": "low",
+        "exudate_level": "low",
+        "infection_signs": false,
+        "pain_level": "none",
+        "necrosis": false
+      },
+      "expect": { "p95_ms_lt": 120 } 
+    }
+  ]
+}

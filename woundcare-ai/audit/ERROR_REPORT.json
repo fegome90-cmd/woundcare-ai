@@ -1,0 +1,30 @@
+{
+  "summary": {"blocker": 1, "high": 1, "medium": 0, "low": 0, "status": "FAIL"},
+  "blockers": [
+    {
+      "id": "UI/CHECK_FAIL care_plan_missing",
+      "file": "backend/service.py",
+      "line": 249,
+      "root_cause": "Pydantic v1 models invoked with v2-only method model_dump(); 422 prevents care_plan propagation",
+      "minimal_fix": "Replace .model_dump() with .dict(); add Recommendation.care_plan and assign before serializing PlanResult"
+    }
+  ],
+  "high": [
+    {
+      "id": "RUNNER/FAIL",
+      "file": "backend/service.py",
+      "line": 249,
+      "root_cause": "Same serialization incompatibility triggers 422 during scenarios",
+      "minimal_fix": "Same as blocker; rerun scenarios to confirm p95<=800ms"
+    }
+  ],
+  "inventory": {
+    "model_dump_calls": [
+      {"file": "backend/service.py", "line": 234, "snippet": "run_column(payload.model_dump(), base_rec=recommendation.model_dump())"},
+      {"file": "backend/service.py", "line": 249, "snippet": "req_dump = payload.model_dump()"},
+      {"file": "backend/service.py", "line": 258, "snippet": "'result': recommendation.model_dump(),"}
+    ]
+  },
+  "git_status_non_audit": "MODIFIED_OUTSIDE_SCOPE",
+  "note": "Report-only gate FAIL: pending patch application; many modified/untracked files outside audit/docs/patches scope"
+}

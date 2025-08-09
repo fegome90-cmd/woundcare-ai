@@ -1,0 +1,52 @@
+<div id="recommendation-modal" class="modal fixed inset-0 z-50 hidden">
+    <div class="modal-background fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+    <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="modal-content bg-white dark:bg-gray-800 w-full max-w-2xl rounded-2xl shadow-xl transform transition-all">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        Recomendaciones de Tratamiento
+                    </h3>
+                    <button data-modal-close class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                        <span class="sr-only">Cerrar</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                    <div id="recommendation-content">
+                        <div id="loading-spinner" class="flex flex-col items-center justify-center py-12">
+                            <div class="loader mb-4"></div>
+                            <p class="text-gray-600 dark:text-gray-400">Generando recomendaciones...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-end gap-4">
+                        <button id="care-plan-btn" disabled
+                            class="inline-flex justify-center items-center px-4 py-2 border border-transparent 
+                                rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 
+                                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                                disabled:opacity-50 disabled:cursor-not-allowed dark:focus:ring-offset-gray-800">
+                            Generar Plan de Cuidado
+                        </button>
+                        <button data-modal-close
+                            class="inline-flex justify-center items-center px-4 py-2 border border-gray-300 
+                                dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 
+                                dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 
+                                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                                dark:focus:ring-offset-gray-800">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
